@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./Auth.jsx";
+import { AuthProvider, RutaProtegida } from "./Auth.jsx";
 import { Layout } from "./Layout.jsx";
 import { Home } from "./Home.jsx";
 import { Login } from "./Login.jsx";
 import { Registro } from "./Registro.jsx";
+import { Vehiculos } from "./Vehiculos.jsx";
 
 function NoEncontrada() {
   return (
@@ -21,6 +22,14 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="registro" element={<Registro />} />
+          <Route
+            path="vehiculos"
+            element={
+              <RutaProtegida>
+                <Vehiculos />
+              </RutaProtegida>
+            }
+          />
           <Route path="*" element={<NoEncontrada />} />
         </Route>
       </Routes>
