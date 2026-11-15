@@ -1,7 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import passport from "passport";
 import { verificarConexion } from "./db.js";
+import authRouter, { authConfig } from "./auth.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,9 +11,14 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 
+authConfig();
+app.use(passport.initialize());
+
 app.get("/", (req, res) => {
   res.json({ success: true, message: "API TP3 - Gestión de transporte" });
 });
+
+app.use("/auth", authRouter);
 
 // Rutas inexistentes
 app.use((req, res) => {
