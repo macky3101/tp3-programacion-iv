@@ -6,6 +6,7 @@ import { Login } from "./Login.jsx";
 import { Registro } from "./Registro.jsx";
 import { Vehiculos } from "./Vehiculos.jsx";
 import { Conductores } from "./Conductores.jsx";
+import { Viajes } from "./Viajes.jsx";
 
 function NoEncontrada() {
   return (
@@ -36,6 +37,14 @@ function App() {
             element={
               <RutaProtegida>
                 <Conductores />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="viajes"
+            element={
+              <RutaProtegida>
+                <Viajes />
               </RutaProtegida>
             }
           />
