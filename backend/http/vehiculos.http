@@ -1,0 +1,121 @@
+@baseUrl = http://localhost:3000
+
+### Iniciar sesión para obtener el token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@transporte.com",
+  "contrasena": "Prueba1234"
+}
+
+@token = {{login.response.body.token}}
+
+### Crear vehículo (201)
+# @name nuevo
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Mercedes-Benz",
+  "modelo": "Atego 1726",
+  "patente": "ab 123 cd",
+  "anio": 2021,
+  "capacidad_carga": 9500
+}
+
+@vehiculoId = {{nuevo.response.body.data.id}}
+
+### Crear vehículo con patente repetida (400)
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Iveco",
+  "modelo": "Tector",
+  "patente": "AB123CD",
+  "anio": 2019,
+  "capacidad_carga": 8000
+}
+
+### Crear vehículo con datos inválidos (400)
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "",
+  "modelo": "Cargo",
+  "patente": "1234",
+  "anio": 1800,
+  "capacidad_carga": -5
+}
+
+### Crear vehículo sin token (401)
+POST {{baseUrl}}/vehiculos
+Content-Type: application/json
+
+{
+  "marca": "Ford",
+  "modelo": "Cargo 1723",
+  "patente": "ABC123",
+  "anio": 2015,
+  "capacidad_carga": 9000
+}
+
+### Listar vehículos (200)
+GET {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+
+### Buscar vehículos (200)
+GET {{baseUrl}}/vehiculos?buscar=merce
+Authorization: Bearer {{token}}
+
+### Obtener vehículo por id (200)
+GET {{baseUrl}}/vehiculos/{{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Vehículo inexistente (404)
+GET {{baseUrl}}/vehiculos/99999
+Authorization: Bearer {{token}}
+
+### Id inválido (400)
+GET {{baseUrl}}/vehiculos/-1
+Authorization: Bearer {{token}}
+
+### Modificar vehículo (200)
+PUT {{baseUrl}}/vehiculos/{{vehiculoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Mercedes-Benz",
+  "modelo": "Atego 1726 Plus",
+  "patente": "AB123CD",
+  "anio": 2021,
+  "capacidad_carga": 10000
+}
+
+### Modificar vehículo inexistente (404)
+PUT {{baseUrl}}/vehiculos/99999
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Scania",
+  "modelo": "R450",
+  "patente": "ZZ999ZZ",
+  "anio": 2022,
+  "capacidad_carga": 25000
+}
+
+### Eliminar vehículo (200, o 400 si tiene viajes)
+DELETE {{baseUrl}}/vehiculos/{{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Eliminar vehículo inexistente (404)
+DELETE {{baseUrl}}/vehiculos/99999
+Authorization: Bearer {{token}}

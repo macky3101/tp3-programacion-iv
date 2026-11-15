@@ -1,0 +1,171 @@
+@baseUrl = http://localhost:3000
+
+### Iniciar sesión para obtener el token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@transporte.com",
+  "contrasena": "Prueba1234"
+}
+
+@token = {{login.response.body.token}}
+
+### Vehículo para los viajes
+# @name vehiculo
+POST {{baseUrl}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Volkswagen",
+  "modelo": "Delivery 11.180",
+  "patente": "AE456FG",
+  "anio": 2020,
+  "capacidad_carga": 6000
+}
+
+### Conductor para los viajes
+# @name conductor
+POST {{baseUrl}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "María",
+  "apellido": "Fernández",
+  "dni": "32456789",
+  "numero_licencia": "LR32456789",
+  "fecha_alta_licencia": "2022-06-15",
+  "fecha_vencimiento_licencia": "2027-06-15"
+}
+
+@vehiculoId = {{vehiculo.response.body.data.id}}
+@conductorId = {{conductor.response.body.data.id}}
+
+### Registrar viaje (201)
+# @name nuevo
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": {{vehiculoId}},
+  "conductor_id": {{conductorId}},
+  "fecha_salida": "2026-11-10T06:00",
+  "fecha_llegada": "2026-11-10T11:30",
+  "origen": "La Rioja",
+  "destino": "Córdoba",
+  "kilometros": 460.5,
+  "observaciones": "Carga de materiales de construcción"
+}
+
+@viajeId = {{nuevo.response.body.data.id}}
+
+### Registrar segundo viaje (201)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": {{vehiculoId}},
+  "conductor_id": {{conductorId}},
+  "fecha_salida": "2026-11-12T07:00",
+  "fecha_llegada": "2026-11-12T10:15",
+  "origen": "Córdoba",
+  "destino": "San Luis",
+  "kilometros": 412
+}
+
+### Llegada anterior a la salida y origen igual al destino (400)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": {{vehiculoId}},
+  "conductor_id": {{conductorId}},
+  "fecha_salida": "2026-11-10T12:00",
+  "fecha_llegada": "2026-11-10T08:00",
+  "origen": "La Rioja",
+  "destino": "la rioja",
+  "kilometros": 0
+}
+
+### Vehículo y conductor inexistentes (400)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": 99999,
+  "conductor_id": 99999,
+  "fecha_salida": "2026-11-10T06:00",
+  "fecha_llegada": "2026-11-10T11:30",
+  "origen": "La Rioja",
+  "destino": "Catamarca",
+  "kilometros": 150
+}
+
+### Licencia no vigente en la fecha del viaje (400)
+POST {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": {{vehiculoId}},
+  "conductor_id": {{conductorId}},
+  "fecha_salida": "2030-01-10T06:00",
+  "fecha_llegada": "2030-01-10T09:00",
+  "origen": "La Rioja",
+  "destino": "Catamarca",
+  "kilometros": 150
+}
+
+### Listar todos los viajes con total de km (200)
+GET {{baseUrl}}/viajes
+Authorization: Bearer {{token}}
+
+### Historial de viajes por vehículo con total de km (200)
+GET {{baseUrl}}/viajes?vehiculo_id={{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Historial de viajes por conductor con total de km (200)
+GET {{baseUrl}}/viajes?conductor_id={{conductorId}}
+Authorization: Bearer {{token}}
+
+### Filtro inválido (400)
+GET {{baseUrl}}/viajes?vehiculo_id=abc
+Authorization: Bearer {{token}}
+
+### Obtener viaje por id (200)
+GET {{baseUrl}}/viajes/{{viajeId}}
+Authorization: Bearer {{token}}
+
+### Viaje inexistente (404)
+GET {{baseUrl}}/viajes/99999
+Authorization: Bearer {{token}}
+
+### Modificar viaje (200)
+PUT {{baseUrl}}/viajes/{{viajeId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculo_id": {{vehiculoId}},
+  "conductor_id": {{conductorId}},
+  "fecha_salida": "2026-11-10T06:00",
+  "fecha_llegada": "2026-11-10T12:00",
+  "origen": "La Rioja",
+  "destino": "Córdoba",
+  "kilometros": 465,
+  "observaciones": "Demora por control en ruta"
+}
+
+### Eliminar viaje (200)
+DELETE {{baseUrl}}/viajes/{{viajeId}}
+Authorization: Bearer {{token}}
+
+### Eliminar viaje sin token (401)
+DELETE {{baseUrl}}/viajes/{{viajeId}}
