@@ -2,6 +2,8 @@
 
 Programación IV - Tecnicatura Universitaria en Programación - UTN Facultad Regional La Rioja
 
+Trabajo práctico realizado por Quispe Macarena.
+
 Aplicación para registrar los vehículos de una empresa de transporte, sus conductores y los viajes realizados.
 
 ## Estructura
