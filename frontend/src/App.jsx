@@ -5,6 +5,7 @@ import { Home } from "./Home.jsx";
 import { Login } from "./Login.jsx";
 import { Registro } from "./Registro.jsx";
 import { Vehiculos } from "./Vehiculos.jsx";
+import { Conductores } from "./Conductores.jsx";
 
 function NoEncontrada() {
   return (
@@ -27,6 +28,14 @@ function App() {
             element={
               <RutaProtegida>
                 <Vehiculos />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="conductores"
+            element={
+              <RutaProtegida>
+                <Conductores />
               </RutaProtegida>
             }
           />
