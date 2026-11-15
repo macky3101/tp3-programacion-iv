@@ -5,6 +5,7 @@ import passport from "passport";
 import { verificarConexion } from "./db.js";
 import authRouter, { authConfig } from "./auth.js";
 import usuariosRouter from "./usuarios.js";
+import vehiculosRouter from "./vehiculos.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/usuarios", usuariosRouter);
+app.use("/vehiculos", vehiculosRouter);
 
 // Rutas inexistentes
 app.use((req, res) => {
